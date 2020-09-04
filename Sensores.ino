@@ -5,6 +5,7 @@ int RELE = 3;
 int Puerta = 5;
 bool isOpen = false;
 int isMoving = 0;
+int Alarma = 11;
 unsigned long Time = 0;
 //Variable para checar cuanto tiempo lleva corriendo
 unsigned long TiempoTranscurrido = 0;
@@ -15,6 +16,7 @@ void setup(){
   pinMode(PIR, INPUT);
   pinMode(RELE, OUTPUT);
   pinMode(Puerta, INPUT);
+  pinMode (Alarma, OUTPUT);
 }
 
 void MostrarTiempo(unsigned long seg){
@@ -50,6 +52,9 @@ void loop(){
           TiempoTranscurrido2 = Time;
           while((Time - TiempoTranscurrido2) <= 2000){
             Serial.println("Sonando alarma");
+             digitalWrite(Alarma, HIGH);
+             delay(200);
+             digitalWrite(Alarma, LOW);
             Time = millis();
           }
           digitalWrite(RELE, LOW);
@@ -62,4 +67,3 @@ void loop(){
     }
   }
 }
-
