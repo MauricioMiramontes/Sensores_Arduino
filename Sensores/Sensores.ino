@@ -1,12 +1,16 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(2,3,4,5,6,7);
+
 //Sensores
-int s_Mov = 2;
-int s_Puerta = 5;
+int s_Mov = 8;
+int s_Puerta = 9;
 //Variables de sensores
 bool p_abierta = false;
 int hay_mov = 0;
 //Salidas al RELE
-int RELE_Alarma = 7;
-int RELE_Led = 3;
+int RELE_Alarma = 10;
+int RELE_Led = 11;
 //Variables de referencia al tiempo 
 unsigned long Tiempo_Transcurrido = 0;
 unsigned long T_Refer_Ciclo = 0;
@@ -21,6 +25,7 @@ void setup()
   //Salidas
   pinMode(RELE_Alarma, OUTPUT);
   pinMode(RELE_Led, OUTPUT);
+  lcd.begin(16,2);
 }
 
 void MostrarTiempo(unsigned long miliseg) //Muestra el tiempo del ciclo 
@@ -30,6 +35,14 @@ void MostrarTiempo(unsigned long miliseg) //Muestra el tiempo del ciclo
   m = int(miliseg / 60000);
   terminado = miliseg % 60000;
   s = int(terminado / 1000);
+  
+  lcd.setCursor(0,0);
+  lcd.print("Tiempo transcurrido: ");
+  lcd.setCursor(0,1);
+  lcd.print(int(m));
+  lcd.print(" m ");
+  lcd.print(int(s));
+  lcd.print(" s ");
 
   //Este bloque se quitara cuando ya no se necesiten pruebas
   //-------------------------------------
@@ -43,6 +56,8 @@ void MostrarTiempo(unsigned long miliseg) //Muestra el tiempo del ciclo
 
 void loop()
 {
+  
+  
   T_Refer_Ciclo = millis(); //Se inicia el tiempo de referencia para cuando inicie el ciclo 
 
   if (digitalRead(s_Puerta) == HIGH) //Se revisa si la puerta se ha abierto 
@@ -75,16 +90,23 @@ void loop()
           digitalWrite(RELE_Alarma, HIGH); 
           while ((Tiempo_Transcurrido - T_Refer_Alarma) <= 2000) //Mientras no haya pasado 1 minuto 
           {
-            Serial.println("Sonando RELE_Alarma");
+            lcd.clear();
+            lcd.setCursor(0,0);
+  			lcd.print("Sonando");
+            lcd.setCursor(0,1);
+            lcd.print("Alarma");
+            Serial.println("Sonando alarma");
             Tiempo_Transcurrido = millis();
           }
           digitalWrite(RELE_Alarma, LOW); //Se apaga alarma y led antes de terminar el ciclo 
           digitalWrite(RELE_Led, LOW);
+          lcd.clear();
           break;
         }
         else
         {
           digitalWrite(RELE_Led, LOW);
+          lcd.clear();
           break;
         }
       }
